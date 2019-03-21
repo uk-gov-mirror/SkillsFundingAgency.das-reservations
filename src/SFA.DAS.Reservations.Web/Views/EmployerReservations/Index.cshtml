@@ -1,8 +1,29 @@
-﻿@{
+﻿@using component_lib.Models
+@using SFA.DAS.Reservations.Web.Controllers
+@model SearchCriteria
+@{
     ViewData["Title"] = "Reservations";
 }
 
 <h1 class="govuk-heading-xl">Reserve funding for apprenticeship training</h1>
+
+@{
+    var query = new QueryModel { Keywords = Model.Keywords, SelectedLevels = Model.SelectedLevels };
+}
+
+@await Component.InvokeAsync("SearchBox", new { searchRouteName = Model.SearchRouteName, q = query })    
+
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            @await Component.InvokeAsync("SearchResults", new { searchRouteName = Model.SearchRouteName, q = query })    
+        </div>
+        <div class="col-4">
+            @await Component.InvokeAsync("SearchFilter", new { searchRouteName = Model.SearchRouteName, q = query })    
+        </div>
+    </div>
+</div>
+
 <p class="govuk-body-l">Check if apprenticeship funding is available for the date you want your apprentice to start and reserve this now to guarantee the funding will be available when you need it.</p>
 <p class="govuk-body">You will need:</p>
 <ul class="govuk-list govuk-list--bullet">

@@ -21,6 +21,8 @@ using SFA.DAS.Reservations.Web.Services;
 using SFA.DAS.Reservations.Infrastructure.Configuration.Configuration;
 using SFA.DAS.Reservations.Infrastructure.Services;
 using SFA.DAS.Reservations.Web.AppStart;
+using SFA.DAS.Employer.Shared.UI;
+using component_lib;
 
 namespace SFA.DAS.Reservations.Web
 {
@@ -75,7 +77,9 @@ namespace SFA.DAS.Reservations.Web
 
             if (isEmployerAuth)
             {
-                services.AddAndConfigureEmployerAuthentication(serviceProvider.GetService<IOptions<IdentityServerConfiguration>>(), serviceProvider.GetService<IEmployerAccountService>());
+                var authOptions = serviceProvider.GetService<IOptions<IdentityServerConfiguration>>();
+                services.AddAndConfigureEmployerAuthentication(authOptions, serviceProvider.GetService<IEmployerAccountService>());
+                services.AddMaMenuConfiguration(_configuration, "employer-signout", authOptions.Value.ClientId);
             }
 
             if (isProviderAuth)
@@ -111,7 +115,8 @@ namespace SFA.DAS.Reservations.Web
                 ? new CurrentDateTime(reservationsWebConfig.CurrentDateTime)
                 : new CurrentDateTime());
 
-           
+           // Add the FAT component dependencies
+            services.AddFatComponents();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
