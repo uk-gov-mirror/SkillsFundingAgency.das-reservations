@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -20,6 +19,7 @@ using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
 using SFA.DAS.Reservations.Web.Services;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Employers
@@ -156,7 +156,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             Assert.AreEqual("ReservationLimitReached", result?.ViewName);
         }
 
-        [Test, RecursiveMoqAutoData]
+        [Test, DomainAutoData]
         public async Task
             And_User_Has_Owner_Role_And_Chosen_Legal_Entity_Has_Not_Signed_Agreement_Then_Redirect_To_Owner_Sign_Route(
                 ReservationsRouteModel routeModel,
@@ -164,14 +164,8 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 GetLegalEntitiesResponse getLegalEntitiesResponse,
                 [Frozen] Mock<IMediator> mockMediator,
                 [Frozen] Mock<IUserClaimsService> mockClaimsService,
-                [Greedy] EmployerReservationsController controller,
-                HttpContext httpContext)
+                EmployerReservationsController controller)
         {
-            controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = httpContext
-            };
-
             getLegalEntitiesResponse.AccountLegalEntities =
                 new List<AccountLegalEntity>
                 {
@@ -196,7 +190,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             result.RouteValues[nameof(ReservationsRouteModel.PreviousPage)].Should().Be(RouteNames.EmployerIndex);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task
             And_User_Has_Transactor_Role_And_Chosen_Legal_Entity_Has_Not_Signed_Agreement_Then_Redirect_To_Transactor_Sign_Route(
                 ReservationsRouteModel routeModel,
@@ -204,7 +198,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 GetLegalEntitiesResponse getLegalEntitiesResponse,
                 [Frozen] Mock<IMediator> mockMediator,
                 [Frozen] Mock<IUserClaimsService> mockClaimsService,
-                [Greedy] EmployerReservationsController controller)
+                EmployerReservationsController controller)
         {
             getLegalEntitiesResponse.AccountLegalEntities =
                 new List<AccountLegalEntity>

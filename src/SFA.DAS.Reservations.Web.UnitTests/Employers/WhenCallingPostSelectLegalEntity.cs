@@ -10,14 +10,13 @@ using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Employers.Queries.GetLegalEntities;
 using SFA.DAS.Reservations.Application.Exceptions;
 using SFA.DAS.Reservations.Application.Reservations.Commands.CacheReservationEmployer;
-using SFA.DAS.Reservations.Domain.Authentication;
 using SFA.DAS.Reservations.Domain.Employers;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
@@ -35,7 +34,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             ReservationsRouteModel routeModel,
             ConfirmLegalEntityViewModel viewModel,
             [Frozen] Mock<IMediator> mockMediator,
-            EmployerReservationsController controller)
+            [NoAutoProperties] EmployerReservationsController controller)
         {
             controller.ModelState.AddModelError("test", "test");
 
@@ -58,7 +57,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             long decodedAccountId,
             [Frozen] Mock<IMediator> mockMediator,
             [Frozen] Mock<IEncodingService> mockEncodingService,
-            EmployerReservationsController controller)
+            [NoAutoProperties] EmployerReservationsController controller)
         {
             var firstLegalEntity = getLegalEntitiesResponse.AccountLegalEntities.First();
             firstLegalEntity.AgreementSigned = true;
@@ -93,7 +92,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             long decodedAccountId,
             [Frozen] Mock<IMediator> mockMediator,
             [Frozen] Mock<IEncodingService> mockEncodingService,
-            EmployerReservationsController controller)
+            [NoAutoProperties] EmployerReservationsController controller)
         {
             var firstLegalEntity = getLegalEntitiesResponse.AccountLegalEntities.First();
             firstLegalEntity.AgreementSigned = true;
@@ -122,7 +121,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             ConfirmLegalEntityViewModel viewModel,
             GetLegalEntitiesResponse getLegalEntitiesResponse,
             [Frozen] Mock<IMediator> mockMediator,
-            EmployerReservationsController controller)
+            [NoAutoProperties] EmployerReservationsController controller)
         {
             var firstLegalEntity = getLegalEntitiesResponse.AccountLegalEntities.First();
             firstLegalEntity.AgreementSigned = true;
@@ -145,7 +144,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             ConfirmLegalEntityViewModel viewModel,
             GetLegalEntitiesResponse getLegalEntitiesResponse,
             [Frozen] Mock<IMediator> mockMediator,
-            EmployerReservationsController controller)
+            [NoAutoProperties] EmployerReservationsController controller)
         {
             var firstLegalEntity = getLegalEntitiesResponse.AccountLegalEntities.First();
             firstLegalEntity.AgreementSigned = true;
@@ -175,7 +174,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             ReservationsRouteModel routeModel,
             ConfirmLegalEntityViewModel viewModel,
             [Frozen] Mock<IMediator> mockMediator,
-            EmployerReservationsController controller)
+            [NoAutoProperties] EmployerReservationsController controller)
         {
             mockMediator
                 .Setup(mediator => mediator.Send(It.IsAny<GetLegalEntitiesQuery>(), It.IsAny<CancellationToken>()))
@@ -191,7 +190,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             ReservationsRouteModel routeModel,
             ConfirmLegalEntityViewModel viewModel,
             [Frozen] Mock<IMediator> mockMediator,
-            EmployerReservationsController controller)
+            [NoAutoProperties] EmployerReservationsController controller)
         {
             mockMediator
                 .Setup(mediator => mediator.Send(It.IsAny<GetLegalEntitiesQuery>(), It.IsAny<CancellationToken>()))
@@ -210,8 +209,10 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 GetLegalEntitiesResponse getLegalEntitiesResponse,
                 [Frozen] Mock<IMediator> mockMediator,
                 [Frozen] Mock<IUserClaimsService> mockClaimsService,
-                EmployerReservationsController controller)
+                [NoAutoProperties] EmployerReservationsController controller)
         {
+            SetControllerContext(controller);
+
             var firstLegalEntity = getLegalEntitiesResponse.AccountLegalEntities.First();
             firstLegalEntity.AgreementSigned = false;
             viewModel.LegalEntity = firstLegalEntity.AccountLegalEntityPublicHashedId;
@@ -241,8 +242,10 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 GetLegalEntitiesResponse getLegalEntitiesResponse,
                 [Frozen] Mock<IMediator> mockMediator,
                 [Frozen] Mock<IUserClaimsService> mockClaimsService,
-                EmployerReservationsController controller)
+                [NoAutoProperties] EmployerReservationsController controller)
         {
+            SetControllerContext(controller);
+
             var firstLegalEntity = getLegalEntitiesResponse.AccountLegalEntities.First();
             firstLegalEntity.AgreementSigned = false;
             viewModel.LegalEntity = firstLegalEntity.AccountLegalEntityPublicHashedId;
@@ -262,6 +265,19 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
 
             result.RouteName.Should().Be(RouteNames.EmployerTransactorSignAgreement);
             result.RouteValues[nameof(ReservationsRouteModel.PreviousPage)].Should().Be(RouteNames.EmployerSelectLegalEntity);
+        }
+
+        private void SetControllerContext(EmployerReservationsController controller)
+        {
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            var urlHelperFactoryMock = new Mock<IUrlHelperFactory>();
+            var httpContext = new DefaultHttpContext();
+            serviceProviderMock.Setup(m => m.GetService(typeof(IUrlHelperFactory))).Returns(urlHelperFactoryMock.Object);
+            httpContext.RequestServices = serviceProviderMock.Object;
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
         }
     }
 }

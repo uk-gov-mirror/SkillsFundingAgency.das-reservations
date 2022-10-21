@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
-using NUnit.Framework;
-using SFA.DAS.Reservations.Web.Controllers;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Moq;
+using NUnit.Framework;
 using SFA.DAS.Reservations.Application.FundingRules.Queries.GetNextUnreadGlobalFundingRule;
 using SFA.DAS.Reservations.Domain.Rules;
 using SFA.DAS.Reservations.Domain.Rules.Api;
+using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
-using SFA.DAS.Testing.AutoFixture;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Employers
 {
     public class WhenViewingTheIndexPage
     {
        
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenChecksIfRelatedUnreadRulesExists(
             string expectedUserId,
             [Frozen] Mock<IMediator> mockMediator,
@@ -45,7 +45,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 q => q.Id.Equals(expectedUserId, StringComparison.CurrentCultureIgnoreCase)),It.IsAny<CancellationToken>()),Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenRedirectToStartIfNoFundingRulesExist(
             string expectedUserId,
             [Frozen] Mock<IMediator> mockMediator,
@@ -68,7 +68,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             Assert.AreEqual(redirect.RouteName, RouteNames.EmployerStart);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenRedirectToFundingNotificationIfFundingRulesExist(
             string expectedUserId,
             [Frozen] Mock<IMediator> mockMediator,
@@ -111,7 +111,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             Assert.AreEqual(RouteNames.EmployerSaveRuleNotificationChoiceNoReservation, viewModel.PostRouteName);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenRedirectToStartIfNoIdFoundOnNextGlobalFundingRule(
             string expectedUserId,
             [Frozen] Mock<IMediator> mockMediator,
@@ -134,7 +134,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             Assert.AreEqual(redirect.RouteName, RouteNames.EmployerStart);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenRedirectToStartIfNoActiveFromDateFoundOnNextGlobalFundingRule(
             string expectedUserId,
             [Frozen] Mock<IMediator> mockMediator,

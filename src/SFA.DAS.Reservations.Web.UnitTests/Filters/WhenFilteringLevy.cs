@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
@@ -17,16 +14,15 @@ using SFA.DAS.Reservations.Web.AppStart;
 using SFA.DAS.Reservations.Web.Filters;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.UnitTests.Customisations;
-using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Filters
 {
     public class WhenFilteringLevy
     {
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task AndIsProvider_ThenContinuesToAction(
             [Frozen] ServiceParameters serviceParameters,
-            [ArrangeActionContext] ActionExecutingContext context,
+            [ArrangeActionExecutingContext] ActionExecutingContext context,
             [Frozen] Mock<ActionExecutionDelegate> nextMethod,
             LevyNotPermittedFilter filter)
         {
@@ -41,7 +37,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Filters
            Assert.Null(context.Result);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task AndIsANonLevyEmployer_ThenContinuesToAction(
             [Frozen] ServiceParameters serviceParameters,
             [Frozen] Mock<IMediator> mockMediator,
@@ -50,7 +46,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Filters
             string employerAccountId,
             long decodedId,
             [Frozen] Mock<IEncodingService> mockEncodingService,
-            [ArrangeActionContext] ActionExecutingContext context,
+            [ArrangeActionExecutingContext] ActionExecutingContext context,
             [Frozen] Mock<ActionExecutionDelegate> nextMethod,
             LevyNotPermittedFilter filter)
         {
@@ -76,7 +72,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Filters
             nextMethod.Verify(x => x(), Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task AndIsALevyEmployer_ThenRedirectsToAccessDeniedPage(
             [Frozen] ServiceParameters serviceParameters,
             [Frozen] Mock<IMediator> mockMediator,
@@ -85,7 +81,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Filters
             string employerAccountId,
             long decodedId,
             [Frozen] Mock<IEncodingService> mockEncodingService,
-            [ArrangeActionContext] ActionExecutingContext context,
+            [ArrangeActionExecutingContext] ActionExecutingContext context,
             [Frozen] Mock<ActionExecutionDelegate> nextMethod,
             LevyNotPermittedFilter filter)
         {

@@ -19,6 +19,8 @@ using SFA.DAS.Reservations.Domain.Rules.Api;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Employers
 {
@@ -39,6 +41,9 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
         public void Arrange()
         {
             var fixture = new Fixture().Customize(new AutoMoqCustomization{ConfigureMembers = true});
+
+            fixture.Customize<BindingInfo>(c => c.OmitAutoProperties());
+
             var config = fixture.Create<ReservationsWebConfiguration>();
             _mockOptions = new Mock<IOptions<ReservationsWebConfiguration>>();
             _mockOptions.SetupGet(options => options.Value)

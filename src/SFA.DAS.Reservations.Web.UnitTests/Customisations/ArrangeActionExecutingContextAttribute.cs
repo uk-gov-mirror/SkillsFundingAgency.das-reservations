@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace SFA.DAS.Reservations.Web.UnitTests.Customisations
 {
     [AttributeUsage(AttributeTargets.Parameter)]
-    public class ArrangeActionContextAttribute : CustomizeAttribute
+    public class ArrangeActionExecutingContextAttribute : CustomizeAttribute
     {
         public override ICustomization GetCustomization(ParameterInfo parameter)
         {
@@ -23,11 +23,11 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Customisations
                 throw new ArgumentException(nameof(parameter));
             }
 
-            return new ArrangeActionContextCustomisation();
+            return new ArrangeActionExecutingContextCustomisation();
         }
     }
 
-    public class ArrangeActionContextCustomisation : ICustomization
+    public class ArrangeActionExecutingContextCustomisation : ICustomization
     {
         public void Customize(IFixture fixture)
         {

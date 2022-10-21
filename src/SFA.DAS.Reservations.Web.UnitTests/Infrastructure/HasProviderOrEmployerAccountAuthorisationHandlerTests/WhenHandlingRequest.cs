@@ -2,10 +2,12 @@
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Web.Infrastructure;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.HasProviderOrEmployerAccountAuthorisationHandlerTests
@@ -31,10 +33,11 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.HasProviderOrEmploye
             providerAuthorizationHandler.Verify(h => h.IsProviderAuthorised(context), Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenChecksIfEmployerIsAuthorised(
             [Frozen] Mock<IEmployerAccountAuthorisationHandler> employerAccountAuthorizationHandler,
             HasProviderOrEmployerAccountRequirement requirement,
+            [Frozen] ActionContext actionContext,
             AuthorizationFilterContext contextFilter,
             HasProviderOrEmployerAccountAuthorisationHandler handler)
         {
