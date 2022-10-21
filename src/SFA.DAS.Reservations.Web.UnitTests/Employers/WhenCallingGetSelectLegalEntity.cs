@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
@@ -47,8 +47,8 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             await controller.SelectLegalEntity(routeModel);
 
             mockMediator.Verify(mediator => mediator.Send(
-                It.Is<GetLegalEntitiesQuery>(query => query.AccountId == decodedAccountId), 
-                It.IsAny<CancellationToken>()), 
+                It.Is<GetLegalEntitiesQuery>(query => query.AccountId == decodedAccountId),
+                It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
@@ -121,7 +121,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             var result = await controller.SelectLegalEntity(routeModel) as ViewResult;
 
             result.Should().NotBeNull();
-            mockMediator.Verify(x => x.Send(It.Is<GetCachedReservationQuery>(c=>c.Id.Equals(routeModel.Id)), It.IsAny<CancellationToken>()), Times.Once);
+            mockMediator.Verify(x => x.Send(It.Is<GetCachedReservationQuery>(c => c.Id.Equals(routeModel.Id)), It.IsAny<CancellationToken>()), Times.Once);
             var viewModel = result?.Model.Should().BeOfType<SelectLegalEntityViewModel>().Subject;
             viewModel.Should().NotBeNull();
         }
@@ -156,7 +156,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             Assert.AreEqual("ReservationLimitReached", result?.ViewName);
         }
 
-        [Test, MoqAutoData]
+        [Test, RecursiveMoqAutoData]
         public async Task
             And_User_Has_Owner_Role_And_Chosen_Legal_Entity_Has_Not_Signed_Agreement_Then_Redirect_To_Owner_Sign_Route(
                 ReservationsRouteModel routeModel,
@@ -164,8 +164,14 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 GetLegalEntitiesResponse getLegalEntitiesResponse,
                 [Frozen] Mock<IMediator> mockMediator,
                 [Frozen] Mock<IUserClaimsService> mockClaimsService,
-                [Greedy] EmployerReservationsController controller)
+                [Greedy] EmployerReservationsController controller,
+                HttpContext httpContext)
         {
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = httpContext
+            };
+
             getLegalEntitiesResponse.AccountLegalEntities =
                 new List<AccountLegalEntity>
                 {

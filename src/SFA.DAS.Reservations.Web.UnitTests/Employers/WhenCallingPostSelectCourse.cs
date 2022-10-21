@@ -9,8 +9,6 @@ using AutoFixture.NUnit3;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.Reservations.Commands.CacheReservationCourse;
@@ -22,7 +20,6 @@ using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
 using SFA.DAS.Testing.AutoFixture;
-using StructureMap.Pipeline;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Employers
 {
@@ -30,20 +27,23 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
     {
         private Course _course;
         private GetCachedReservationResult _cachedReservationResult;
+        private EmployerReservationsController _controller;
         private Mock<IMediator> _mediator;
         private Mock<IExternalUrlHelper> _externalUrlHelper;
 
         [SetUp]
         public void Arrange()
         {
-            var fixture = new Fixture().Customize(new AutoMoqCustomization{ConfigureMembers = true});
+            var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
+
+            fixture.Customize<EmployerReservationsController>(c => c.FromFactory(new MethodInvoker(new GreedyConstructorQuery())).OmitAutoProperties());
 
             _course = new Course("1-4-5", "test", 1);
             _cachedReservationResult = fixture.Create<GetCachedReservationResult>();
             _externalUrlHelper = fixture.Freeze<Mock<IExternalUrlHelper>>();
             _mediator = fixture.Freeze<Mock<IMediator>>();
-            
-            
+
+            _controller = fixture.Create<EmployerReservationsController>();
 
             _mediator.Setup(mediator => mediator.Send(
                     It.IsAny<GetCachedReservationQuery>(),
@@ -68,27 +68,25 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
         [Test, MoqAutoData]
         public async Task Then_Caches_Draft_Reservation(
             ReservationsRouteModel routeModel,
-            PostSelectCourseViewModel postSelectCourseViewModel,
-            [Greedy] EmployerReservationsController controller)
+            PostSelectCourseViewModel postSelectCourseViewModel)
         {
             //Assign
             postSelectCourseViewModel.SelectedCourseId = _course.Id;
             postSelectCourseViewModel.ApprenticeTrainingKnown = true;
 
             //Act
-            await controller.PostSelectCourse(routeModel, postSelectCourseViewModel);
+            await _controller.PostSelectCourse(routeModel, postSelectCourseViewModel);
 
             //Assert
-            _mediator.Verify(mediator => 
-                mediator.Send(It.Is<CacheReservationCourseCommand>(command => 
+            _mediator.Verify(mediator =>
+                mediator.Send(It.Is<CacheReservationCourseCommand>(command =>
                     command.SelectedCourseId.Equals(_course.Id)), It.IsAny<CancellationToken>()));
         }
 
-        [Test, MoqAutoData] 
+        [Test, MoqAutoData]
         public async Task And_No_Course_Then_Caches_Draft_Reservation(
             ReservationsRouteModel routeModel,
-            PostSelectCourseViewModel postSelectCourseViewModel,
-            [Greedy] EmployerReservationsController controller)
+            PostSelectCourseViewModel postSelectCourseViewModel)
         {
             _mediator.Setup(mediator => mediator.Send(
                     It.IsAny<GetCachedReservationQuery>(),
@@ -96,25 +94,24 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 .ReturnsAsync(() => _cachedReservationResult);
             postSelectCourseViewModel.SelectedCourseId = null;
             postSelectCourseViewModel.ApprenticeTrainingKnown = true;
-            
-            await controller.PostSelectCourse(routeModel, postSelectCourseViewModel);
 
-            _mediator.Verify(mediator => 
-                mediator.Send(It.IsAny<CacheReservationCourseCommand>(), It.IsAny<CancellationToken>()), 
+            await _controller.PostSelectCourse(routeModel, postSelectCourseViewModel);
+
+            _mediator.Verify(mediator =>
+                mediator.Send(It.IsAny<CacheReservationCourseCommand>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
 
         [Test, MoqAutoData]
         public async Task Then_Adds_Guid_To_RouteModel(
             ReservationsRouteModel routeModel,
-            PostSelectCourseViewModel postSelectCourseViewModel,
-            [Greedy] EmployerReservationsController controller)
+            PostSelectCourseViewModel postSelectCourseViewModel)
         {
             //Assign
             postSelectCourseViewModel.SelectedCourseId = _course.Id;
 
             //Act
-            var result = await controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as RedirectToRouteResult;
+            var result = await _controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as RedirectToRouteResult;
 
             //Assert
             Assert.IsNotNull(result);
@@ -126,8 +123,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
         [Test, AutoData]//note cannot use moqautodata to construct controller here due to modelmetadata usage.
         public async Task And_Validation_Error_Then_Returns_Validation_Error_Details(
             ReservationsRouteModel routeModel,
-            PostSelectCourseViewModel postSelectCourseViewModel,
-            [Greedy] EmployerReservationsController controller)
+            PostSelectCourseViewModel postSelectCourseViewModel)
         {
             //Assign
             postSelectCourseViewModel.SelectedCourseId = _course.Id;
@@ -137,23 +133,21 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 .ThrowsAsync(new ValidationException(new ValidationResult("Failed", new List<string> { "Course|The Course field is not valid." }), null, null));
 
             //Act
-            var result = await controller.PostSelectCourse(routeModel, postSelectCourseViewModel);
+            var result = await _controller.PostSelectCourse(routeModel, postSelectCourseViewModel);
 
             //Assert
             Assert.IsNotNull(result);
             var actualViewResult = result as ViewResult;
             Assert.That(actualViewResult.ViewName == "SelectCourse");
-            Assert.IsFalse(controller.ModelState.IsValid);
-            Assert.IsTrue(controller.ModelState.ContainsKey("Course"));
+            Assert.IsFalse(_controller.ModelState.IsValid);
+            Assert.IsTrue(_controller.ModelState.ContainsKey("Course"));
         }
-        
+
         [Test, MoqAutoData]
         public async Task Then_The_BackLink_Is_Set_To_Return_To_CohortDetails_From_ValidationError_If_There_Is_A_Cohort_Ref(
             ReservationsRouteModel routeModel,
             string cohortUrl,
-            PostSelectCourseViewModel postSelectCourseViewModel,
-            [Greedy] EmployerReservationsController controller
-            )
+            PostSelectCourseViewModel postSelectCourseViewModel)
         {
             //Arrange
             _cachedReservationResult.CohortRef = "ABC123";
@@ -169,7 +163,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 .Returns(cohortUrl);
 
             //Act
-            var result = await controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as ViewResult;
+            var result = await _controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as ViewResult;
 
             var viewModel = result?.Model as EmployerSelectCourseViewModel;
             Assert.IsNotNull(viewModel);
@@ -182,8 +176,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             ICollection<Course> courses,
             [Frozen] Mock<IMediator> mockMediator,
             ReservationsRouteModel routeModel,
-            PostSelectCourseViewModel postSelectCourseViewModel,
-            [Greedy] EmployerReservationsController controller)
+            PostSelectCourseViewModel postSelectCourseViewModel)
         {
             //Arrange
             routeModel.IsFromManage = false;
@@ -196,7 +189,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             postSelectCourseViewModel.ApprenticeTrainingKnown = true;
 
             //Act
-            var result = await controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as ViewResult;
+            var result = await _controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as ViewResult;
 
             var viewModel = result?.Model as EmployerSelectCourseViewModel;
             Assert.IsNotNull(viewModel);
@@ -207,11 +200,8 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
 
         [Test, MoqAutoData]
         public async Task Then_The_BackLink_Is_Set_To_Return_To_SelectLegalEntityView_When_Validation_Error(
-            ICollection<Course> courses,
-            [Frozen] Mock<IMediator> mockMediator,
             ReservationsRouteModel routeModel,
-            PostSelectCourseViewModel postSelectCourseViewModel,
-            [Greedy] EmployerReservationsController controller)
+            PostSelectCourseViewModel postSelectCourseViewModel)
         {
             //Arrange
             routeModel.IsFromManage = null;
@@ -221,12 +211,12 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
             routeModel.FromReview = false;
             _mediator.Setup(mediator => mediator.Send(It.IsAny<CacheReservationCourseCommand>(), It.IsAny<CancellationToken>()))
                 .ThrowsAsync(new ValidationException(new ValidationResult("Failed", new List<string> { "Course|The Course field is not valid." }), null, null));
-            postSelectCourseViewModel.SelectedCourseId= _course.Id;
+            postSelectCourseViewModel.SelectedCourseId = _course.Id;
             postSelectCourseViewModel.ApprenticeTrainingKnown = true;
 
 
             //Act
-            var result = await controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as ViewResult;
+            var result = await _controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as ViewResult;
 
             var viewModel = result?.Model as EmployerSelectCourseViewModel;
             Assert.IsNotNull(viewModel);
@@ -237,15 +227,14 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
         [Test, MoqAutoData]
         public async Task WhenApprenticeshipTrainingNotKnown_ThenRedirectsToGuidancePage(
             ReservationsRouteModel routeModel,
-            PostSelectCourseViewModel postSelectCourseViewModel,
-            [Greedy] EmployerReservationsController controller)
+            PostSelectCourseViewModel postSelectCourseViewModel)
         {
             //Arrange
             postSelectCourseViewModel.ApprenticeTrainingKnown = false;
             var expectedRouteName = RouteNames.EmployerCourseGuidance;
 
             //Act
-            var result = await controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as RedirectToRouteResult;
+            var result = await _controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as RedirectToRouteResult;
 
             //Assert
             Assert.NotNull(result);
@@ -254,10 +243,8 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
 
         [Test, MoqAutoData]
         public async Task WhenApprenticeshipTrainingIsNull_ThenRedirectsToSelectCourse(
-            ReservationsRouteModel routeModel, 
-            PostSelectCourseViewModel postSelectCourseViewModel,
-            [Frozen] Mock<IMediator> mockMediator,
-            [Greedy] EmployerReservationsController controller)
+            ReservationsRouteModel routeModel,
+            PostSelectCourseViewModel postSelectCourseViewModel)
         {
             //Arrange
             postSelectCourseViewModel.ApprenticeTrainingKnown = null;
@@ -266,7 +253,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Employers
                 .ThrowsAsync(new ValidationException(new ValidationResult("Failed", new List<string> { "Course|The Course field is not valid." }), null, null));
 
             //Act
-            var result = await controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as ViewResult;
+            var result = await _controller.PostSelectCourse(routeModel, postSelectCourseViewModel) as ViewResult;
 
             //Assert
             Assert.NotNull(result);
