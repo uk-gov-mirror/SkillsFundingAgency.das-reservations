@@ -33,7 +33,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Providers
             GetLegalEntitiesResponse getLegalEntitiesResponse,
             [Frozen] Mock<IMediator> mockMediator,
             [Frozen] Mock<ISessionStorageService<GetTrustedEmployersResponse>> sessionStorageService,
-            ProviderReservationsController controller)
+            [Greedy] ProviderReservationsController controller)
         {
             mockMediator
                 .Setup(mediator => mediator.Send(
@@ -84,7 +84,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Providers
             [Frozen] Mock<IEncodingService> encodingService,
             [Frozen] Mock<IMediator> mockMediator,
             [Frozen] Mock<ISessionStorageService<GetTrustedEmployersResponse>> sessionStorageService,
-            ProviderReservationsController controller)
+            [Greedy] ProviderReservationsController controller)
         {
             var ale = AccountLegalEntities().ToList();
 

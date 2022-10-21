@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using FluentAssertions;
@@ -26,7 +27,8 @@ namespace SFA.DAS.Reservations.Infrastructure.UnitTests.Services.EmployerAccount
 
             var result = await service.GetAccountUsers(accountId);
 
-            result.Should().BeEquivalentTo(teamMembers);
+            result.Should().BeEquivalentTo(teamMembers, options=>options.Excluding(c=>c.Status));
+            result.Select(c => c.Status).Should().BeEquivalentTo(teamMembers.Select(x => (int) x.Status));
         }
     }
 }

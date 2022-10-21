@@ -75,7 +75,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
 
             Func<Task> act = async () => { await _commandHandler.Handle(command, CancellationToken.None); };
 
-            act.Should().ThrowExactly<ValidationException>()
+            act.Should().ThrowExactlyAsync<ValidationException>().Result
                 .Which.ValidationResult.MemberNames.First(c=>c.StartsWith(propertyName)).Should().NotBeNullOrEmpty();
         }
 

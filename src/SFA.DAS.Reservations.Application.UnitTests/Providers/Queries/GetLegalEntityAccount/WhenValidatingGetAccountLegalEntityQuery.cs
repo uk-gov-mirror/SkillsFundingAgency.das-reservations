@@ -20,7 +20,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Providers.Queries.GetLegalE
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(GetAccountLegalEntityQuery.AccountLegalEntityPublicHashedId))
-                .WhichValue.Should().Be($"{nameof(GetAccountLegalEntityQuery.AccountLegalEntityPublicHashedId)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(GetAccountLegalEntityQuery.AccountLegalEntityPublicHashedId)} has not been supplied");
         }
 
         [Test, AutoData]

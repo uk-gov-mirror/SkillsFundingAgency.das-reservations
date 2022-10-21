@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SFA.DAS.Provider.Idams.Stub.Extensions;
 using SFA.DAS.Reservations.Infrastructure.Configuration;
@@ -23,7 +24,7 @@ namespace SFA.DAS.Reservations.Web.AppStart
             this IServiceCollection services, 
             IOptions<ProviderIdamsConfiguration> idamsConfiguration, 
             IConfiguration config, 
-            IHostingEnvironment env)
+            IWebHostEnvironment env)
         {
             var cookieOptions = new Action<CookieAuthenticationOptions>(options =>
             {

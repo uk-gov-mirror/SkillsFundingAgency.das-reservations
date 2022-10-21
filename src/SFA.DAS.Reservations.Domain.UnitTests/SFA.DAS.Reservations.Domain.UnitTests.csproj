@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>.net6.0</TargetFramework>
     <ProjectGuid>62C9313C-D26F-4F05-9879-F0031A9DFBE0</ProjectGuid>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -10,7 +10,7 @@
     <PackageReference Include="AutoFixture" Version="4.17.0" />
     <PackageReference Include="AutoFixture.AutoMoq" Version="4.17.0" />
     <PackageReference Include="AutoFixture.NUnit3" Version="4.17.0" />
-    <PackageReference Include="FluentAssertions" Version="5.9.0" />
+    <PackageReference Include="FluentAssertions" Version="6.7.0" />
     <PackageReference Include="nunit" Version="3.13.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />

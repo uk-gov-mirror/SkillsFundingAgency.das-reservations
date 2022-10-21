@@ -94,7 +94,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             [Frozen] Mock<IEncodingService> mockEncodingService,
             [Frozen] Mock<ITrainingDateService> mockStartDateService,
             [Frozen] Mock<IMediator> mockMediator,
-            ReservationsController controller)
+            [Greedy] ReservationsController controller)
         {
             apprenticeshipTrainingFormModel.StartDate = JsonConvert.SerializeObject(trainingDateModel);
             controller.ModelState.AddModelError("StartDate", "StartDate");
@@ -120,7 +120,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             [Frozen] Mock<IEncodingService> mockEncodingService,
             [Frozen] Mock<ITrainingDateService> mockStartDateService,
             [Frozen] Mock<IMediator> mockMediator,
-            ReservationsController controller)
+            [Greedy] ReservationsController controller)
         {
             apprenticeshipTrainingFormModel.StartDate = JsonConvert.SerializeObject(trainingDateModel);
             controller.ModelState.AddModelError("StartDate", "StartDate");
@@ -152,7 +152,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             long accountId,
             [Frozen] Mock<IMediator> mockMediator,
             [Frozen] Mock<IEncodingService> mockEncodingService,
-            ReservationsController controller,
+            [Greedy] ReservationsController controller,
             string hashedAccountId)
         {
             apprenticeshipTrainingFormModel.StartDate = JsonConvert.SerializeObject(trainingDateModel);
@@ -196,7 +196,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             [Frozen] Mock<IMediator> mockMediator,
             [Frozen] Mock<IEncodingService> mockEncodingService,
             [Frozen] Mock<ITrainingDateService> mockStartDateService,
-            ReservationsController controller)
+            [Greedy] ReservationsController controller)
         {
             apprenticeshipTrainingFormModel.StartDate = JsonConvert.SerializeObject(trainingDateModel);
             controller.ModelState.AddModelError("StartDate", "StartDate");
@@ -250,7 +250,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             [Frozen] Mock<IMediator> mockMediator,
             [Frozen] Mock<IEncodingService> mockEncodingService,
             [Frozen] Mock<ITrainingDateService> mockStartDateService,
-            ReservationsController controller)
+            [Greedy] ReservationsController controller)
         {
             apprenticeshipTrainingFormModel.StartDate = JsonConvert.SerializeObject(trainingDateModel);
             controller.ModelState.AddModelError("StartDate", "StartDate");
@@ -423,7 +423,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             var result = await _controller.PostApprenticeshipTraining(routeModel, formModel) as RedirectToRouteResult;
 
             result.RouteValues.Should().ContainKey("Id")
-                .WhichValue.Should().Be(routeModel.Id);
+                .WhoseValue.Should().Be(routeModel.Id);
         }
 
         [Test, AutoData]//note cannot use moqautodata to construct controller here due to modelmetadata usage.

@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Internal;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using SFA.DAS.Reservations.Application.Validation;
 using SFA.DAS.Reservations.Domain.Interfaces;
 

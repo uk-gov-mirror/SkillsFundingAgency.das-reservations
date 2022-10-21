@@ -22,7 +22,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Queries.GetPro
             
             result.ValidationDictionary
                 .Should().ContainKey(nameof(GetProviderCacheReservationCommandQuery.UkPrn))
-                .WhichValue.Should()
+                .WhoseValue.Should()
                 .Be($"{nameof(GetProviderCacheReservationCommandQuery.UkPrn)} has not been supplied");
         }
 
@@ -40,7 +40,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Queries.GetPro
 
             result.ValidationDictionary
                 .Should().ContainKey(nameof(GetProviderCacheReservationCommandQuery.AccountLegalEntityPublicHashedId))
-                .WhichValue.Should()
+                .WhoseValue.Should()
                 .Be($"{nameof(GetProviderCacheReservationCommandQuery.AccountLegalEntityPublicHashedId)} has not been supplied");
         }
 

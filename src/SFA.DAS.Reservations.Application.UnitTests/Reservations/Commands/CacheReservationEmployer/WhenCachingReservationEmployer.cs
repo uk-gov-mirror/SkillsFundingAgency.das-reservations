@@ -17,6 +17,7 @@ using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Domain.Rules;
 using SFA.DAS.Reservations.Domain.Rules.Api;
+using TechTalk.SpecFlow.CommonModels;
 using ValidationResult = SFA.DAS.Reservations.Application.Validation.ValidationResult;
 
 namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.CacheReservationEmployer
@@ -81,7 +82,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             Func<Task> act = async () => { await _commandHandler.Handle(command, CancellationToken.None); };
 
             //Assert
-            act.Should().ThrowExactly<ValidationException>()
+            act.Should().ThrowExactlyAsync<ValidationException>().Result
                 .Which.ValidationResult.MemberNames.First(c=>c.StartsWith(propertyName)).Should().NotBeNullOrEmpty();
         }
 

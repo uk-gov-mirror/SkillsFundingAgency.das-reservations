@@ -42,7 +42,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationEmployerCommand.Id))
-                .WhichValue.Should().Be($"{nameof(CacheReservationEmployerCommand.Id)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationEmployerCommand.Id)} has not been supplied");
         }
 
         [Test, MoqAutoData]
@@ -138,7 +138,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationEmployerCommand.AccountId))
-                .WhichValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountId)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountId)} has not been supplied");
         }
 
         [Test, MoqAutoData]
@@ -158,7 +158,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationEmployerCommand.AccountLegalEntityId))
-                .WhichValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityId)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityId)} has not been supplied");
         }
 
         [Test, MoqAutoData]
@@ -178,7 +178,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationEmployerCommand.AccountLegalEntityName))
-                .WhichValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityName)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityName)} has not been supplied");
         }
 
         [Test, MoqAutoData]
@@ -198,7 +198,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationEmployerCommand.AccountLegalEntityName))
-                .WhichValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityName)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityName)} has not been supplied");
         }
 
         [Test, MoqAutoData]
@@ -218,7 +218,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationEmployerCommand.AccountLegalEntityPublicHashedId))
-                .WhichValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityPublicHashedId)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityPublicHashedId)} has not been supplied");
         }
 
         [Test, MoqAutoData]
@@ -238,7 +238,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationEmployerCommand.AccountLegalEntityPublicHashedId))
-                .WhichValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityPublicHashedId)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationEmployerCommand.AccountLegalEntityPublicHashedId)} has not been supplied");
         }
 
         [Test, MoqAutoData]

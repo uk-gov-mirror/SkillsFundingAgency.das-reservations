@@ -20,7 +20,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Commitments.Queries.GetCoho
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(GetCohortQuery.CohortId))
-                .WhichValue.Should().Be($"{nameof(GetCohortQuery.CohortId)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(GetCohortQuery.CohortId)} has not been supplied");
         }
 
         [Test, AutoData]

@@ -11,8 +11,10 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting.Internal;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using SFA.DAS.Encoding;
 using SFA.DAS.Reservations.Application.Providers.Queries.GetTrustedEmployers;
 using SFA.DAS.Reservations.Domain.Interfaces;
@@ -30,14 +32,18 @@ namespace SFA.DAS.Reservations.Web.AcceptanceTests.Infrastructure
         public TestServiceProvider(string authType)
         {
             var serviceCollection = new ServiceCollection();
-            var hosting = new HostingEnvironment{EnvironmentName = EnvironmentName.Development, ApplicationName = "SFA.DAS.Reservations.Web"};
+            var hosting = new Mock<IWebHostEnvironment>(MockBehavior.Loose);
+            // hosting.Object.EnvironmentName = EnvironmentName.Development;
+            // hosting.Object.ApplicationName = "SFA.DAS.Reservations.Web";
+            
+            //var hosting = new HostingEnvironment{EnvironmentName = EnvironmentName.Development, ApplicationName = "SFA.DAS.Reservations.Web"};
             var configuration = GenerateConfiguration(authType);
 
-            var startup = new Startup(configuration, hosting);
+            var startup = new Startup(configuration, hosting.Object);
 
             startup.ConfigureServices(serviceCollection);
             serviceCollection.ConfigureTestServiceCollection(configuration, null);
-            serviceCollection.AddTransient<IHostingEnvironment, HostingEnvironment>();
+            //serviceCollection.AddScoped<IWebHostEnvironment>((_)=>hosting.Object);
             RegisterControllers(serviceCollection);
 
             _serviceProvider = serviceCollection.BuildServiceProvider();

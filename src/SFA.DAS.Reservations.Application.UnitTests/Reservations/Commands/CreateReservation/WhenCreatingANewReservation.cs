@@ -112,7 +112,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Creat
 
             Func<Task> act = async () => { await _commandHandler.Handle(command, CancellationToken.None); };
 
-            act.Should().ThrowExactly<ValidationException>()
+            act.Should().ThrowExactlyAsync<ValidationException>().Result
                 .Which.ValidationResult.MemberNames.First(c=>c.StartsWith(propertyName)).Should().NotBeNullOrEmpty();
         }
 
@@ -152,7 +152,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Creat
 
             Func<Task> act = async () => { await _commandHandler.Handle(command, CancellationToken.None); };
 
-            act.Should().ThrowExactly<CachedReservationNotFoundException>()
+            act.Should().ThrowExactlyAsync<CachedReservationNotFoundException>().Result
                 .WithMessage($"No reservation was found with id [{command.Id}].");
         }
 

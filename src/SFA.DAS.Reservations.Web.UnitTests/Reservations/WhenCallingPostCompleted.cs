@@ -1,6 +1,7 @@
 ﻿using System;
 using AutoFixture;
 using AutoFixture.AutoMoq;
+using AutoFixture.Kernel;
 using AutoFixture.NUnit3;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -11,6 +12,7 @@ using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
+using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
 {
@@ -24,12 +26,12 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             _fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
         }
 
-        [Test, AutoData]
+        [Test, MoqAutoData]
         public void And_Has_Ukprn_And_ValidationError_Then_Return_Provider_Completed_View(
             CompletedViewModel model, 
-            ReservationsRouteModel routeModel)
+            ReservationsRouteModel routeModel,
+            [Greedy] ReservationsController controller)
         {
-            var controller = _fixture.Create<ReservationsController>();
             controller.ModelState.AddModelError("AddApprentice", "AddApprentice");
 
             var actual = controller.PostCompleted(routeModel, model);
@@ -42,10 +44,10 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         [Test, AutoData]
         public void And_No_Ukprn_And_ValidationError_Then_Return_Employer_Completed_View(
             CompletedViewModel model, 
-            ReservationsRouteModel routeModel)
+            ReservationsRouteModel routeModel,
+            [Greedy] ReservationsController controller)
         {
             routeModel.UkPrn = null;
-            var controller = _fixture.Create<ReservationsController>();
             controller.ModelState.AddModelError("AddApprentice", "AddApprentice");
 
             var actual = controller.PostCompleted(routeModel, model);
@@ -55,11 +57,15 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             Assert.AreEqual(ViewNames.EmployerCompleted, actualModel.ViewName);
         }
         
-        [TestCase(CompletedReservationWhatsNext.RecruitAnApprentice)]
-        [TestCase(CompletedReservationWhatsNext.AddAnApprentice)]
-        [TestCase(CompletedReservationWhatsNext.Homepage)]
-        [TestCase(CompletedReservationWhatsNext.FindApprenticeshipTraining)]
-        public void And_Has_Ukprn_Then_The_Request_Is_Redirected_Based_On_The_Selection(CompletedReservationWhatsNext selection)
+        [Test]
+        [MoqInlineAutoData(CompletedReservationWhatsNext.RecruitAnApprentice)]
+        [MoqInlineAutoData(CompletedReservationWhatsNext.AddAnApprentice)]
+        [MoqInlineAutoData(CompletedReservationWhatsNext.Homepage)]
+        [MoqInlineAutoData(CompletedReservationWhatsNext.FindApprenticeshipTraining)]
+        public void And_Has_Ukprn_Then_The_Request_Is_Redirected_Based_On_The_Selection(
+            CompletedReservationWhatsNext selection, 
+            [Frozen] Mock<IExternalUrlHelper> mockUrlHelper,
+            [Greedy] ReservationsController controller)
         {
             var model = _fixture.Create<CompletedViewModel>();
             model.WhatsNext = selection;
@@ -70,7 +76,6 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             var providerRecruitUrl = _fixture.Create<string>();
             var addApprenticeUrl = _fixture.Create<string>();
             var homeUrl = _fixture.Create<string>();
-            var mockUrlHelper = _fixture.Freeze<Mock<IExternalUrlHelper>>();
             
             mockUrlHelper
                 .Setup(helper => helper.GenerateUrl(
@@ -87,8 +92,6 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             mockUrlHelper
                 .Setup(helper => helper.GenerateDashboardUrl(null))
                 .Returns(homeUrl);
-            
-            var controller = _fixture.Create<ReservationsController>();
             
             var actual = controller.PostCompleted(routeModel, model);
 
@@ -119,11 +122,12 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             }
         }
 
-        [TestCase(CompletedReservationWhatsNext.RecruitAnApprentice)]
-        [TestCase(CompletedReservationWhatsNext.AddAnApprentice)]
-        [TestCase(CompletedReservationWhatsNext.Homepage)]
-        [TestCase(CompletedReservationWhatsNext.FindApprenticeshipTraining)]
-        public void And_No_Ukprn_Then_The_Request_Is_Redirected_Based_On_The_Selection(CompletedReservationWhatsNext selection)
+        [Test]
+        [MoqInlineAutoData(CompletedReservationWhatsNext.RecruitAnApprentice)]
+        [MoqInlineAutoData(CompletedReservationWhatsNext.AddAnApprentice)]
+        [MoqInlineAutoData(CompletedReservationWhatsNext.Homepage)]
+        [MoqInlineAutoData(CompletedReservationWhatsNext.FindApprenticeshipTraining)]
+        public void And_No_Ukprn_Then_The_Request_Is_Redirected_Based_On_The_Selection(CompletedReservationWhatsNext selection, [Greedy] ReservationsController controller)
         {
             var model = _fixture.Create<CompletedViewModel>();
             model.WhatsNext = selection;
@@ -153,8 +157,6 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             mockUrlHelper
                 .Setup(helper => helper.GenerateDashboardUrl(routeModel.EmployerAccountId))
                 .Returns(homeUrl);
-            
-            var controller = _fixture.Create<ReservationsController>();
             
             var actual = controller.PostCompleted(routeModel, model);
 
@@ -186,7 +188,8 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         }
 
         [Test]
-        public void Then_When_There_Is_A_Cohort_Ref_The_Add_Apprentice_Link_Includes_The_Reference()
+        [MoqAutoData]
+        public void Then_When_There_Is_A_Cohort_Ref_The_Add_Apprentice_Link_Includes_The_Reference([Greedy] ReservationsController controller)
         {
             //Arrange
             var model = _fixture.Create<CompletedViewModel>();
@@ -200,8 +203,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
                     model.StartDate, model.CohortRef, routeModel.EmployerAccountId, 
                     false, string.Empty, string.Empty, model.JourneyData))
                 .Returns(addApprenticeUrl);
-            var controller = _fixture.Create<ReservationsController>();
-
+            
             //Act
             var actual = controller.PostCompleted(routeModel, model);
             
@@ -213,7 +215,8 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
 
 
         [Test]
-        public void Then_When_There_Is_No_Cohort_Ref_But_ProviderId_The_Add_Apprentice_Link_Includes_The_Reference_For_Employer()
+        [MoqAutoData]
+        public void Then_When_There_Is_No_Cohort_Ref_But_ProviderId_The_Add_Apprentice_Link_Includes_The_Reference_For_Employer([Greedy] ReservationsController controller)
         {
             //Arrange
             var model = _fixture.Create<CompletedViewModel>();
@@ -230,8 +233,6 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
                     model.StartDate, model.CohortRef, routeModel.EmployerAccountId, 
                     true, string.Empty, string.Empty, model.JourneyData))
                 .Returns(addApprenticeUrl);
-
-            var controller = _fixture.Create<ReservationsController>();
 
             //Act
             var actual = controller.PostCompleted(routeModel, model);

@@ -38,7 +38,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof( CacheReservationCourseCommand.Id))
-                .WhichValue.Should().Be($"{nameof( CacheReservationCourseCommand.Id)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof( CacheReservationCourseCommand.Id)} has not been supplied");
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationCourseCommand.SelectedCourseId))
-                .WhichValue.Should().Be("Select which apprenticeship training your apprentice will take");
+                .WhoseValue.Should().Be("Select which apprenticeship training your apprentice will take");
         }
 
         
@@ -79,7 +79,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof( CacheReservationCourseCommand.SelectedCourseId))
-                .WhichValue.Should().Be("Selected course does not exist");
+                .WhoseValue.Should().Be("Selected course does not exist");
         }
 
         [Test]

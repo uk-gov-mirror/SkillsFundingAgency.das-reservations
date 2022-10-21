@@ -13,7 +13,8 @@ namespace SFA.DAS.Reservations.Domain.UnitTests.Employers
         {
             EmployerAccountUser result = source;
 
-            result.Should().BeEquivalentTo(source);
+            result.Should().BeEquivalentTo(source, options=>options.Excluding(c=>c.Status));
+            result.Status.Should().Be((int) source.Status);
         }
     }
 }

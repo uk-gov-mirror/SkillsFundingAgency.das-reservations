@@ -26,7 +26,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
            
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationStartDateCommand.Id))
-                .WhichValue.Should().Be($"{nameof(CacheReservationStartDateCommand.Id)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationStartDateCommand.Id)} has not been supplied");
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationStartDateCommand.TrainingDate))
-                .WhichValue.Should().Be($"{nameof(CacheReservationStartDateCommand.TrainingDate)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationStartDateCommand.TrainingDate)} has not been supplied");
         }
 
         [Test]
@@ -65,7 +65,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Cache
             
             result.ValidationDictionary
                 .Should().ContainKey(nameof(CacheReservationStartDateCommand.TrainingDate))
-                .WhichValue.Should().Be($"{nameof(CacheReservationStartDateCommand.TrainingDate.StartDate)} must be set on {nameof(CacheReservationStartDateCommand.TrainingDate)}");
+                .WhoseValue.Should().Be($"{nameof(CacheReservationStartDateCommand.TrainingDate.StartDate)} must be set on {nameof(CacheReservationStartDateCommand.TrainingDate)}");
         }
        
         [Test]

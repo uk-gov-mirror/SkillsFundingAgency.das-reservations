@@ -20,7 +20,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Providers.Queries.GetTruste
             result.ValidationDictionary.Count.Should().Be(1);
             result.ValidationDictionary
                 .Should().ContainKey(nameof(GetTrustedEmployersQuery.UkPrn))
-                .WhichValue.Should().Be($"{nameof(GetTrustedEmployersQuery.UkPrn)} has not been supplied");
+                .WhoseValue.Should().Be($"{nameof(GetTrustedEmployersQuery.UkPrn)} has not been supplied");
         }
 
         [Test, AutoData]

@@ -54,7 +54,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Commands.Delet
 
             Func<Task> act = async () => { await handler.Handle(command, CancellationToken.None); };
 
-            act.Should().ThrowExactly<ValidationException>()
+            act.Should().ThrowExactlyAsync<ValidationException>().Result
                 .Which.ValidationResult.MemberNames.First(c=>c.StartsWith(propertyName)).Should().NotBeNullOrEmpty();
         }
 

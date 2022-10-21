@@ -4,12 +4,11 @@ using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Logging;
 using SFA.DAS.Authorization.DependencyResolution.Microsoft;
 using SFA.DAS.Authorization.Mvc.Extensions;
 using SFA.DAS.Configuration.AzureTableStorage;
@@ -29,10 +28,10 @@ namespace SFA.DAS.Reservations.Web
     {
         private const string EncodingConfigKey = "SFA.DAS.Encoding";
         
-        private readonly IHostingEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
         private readonly IConfiguration _configuration;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment)
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             _environment = environment;
             var config = new ConfigurationBuilder()
@@ -134,9 +133,9 @@ namespace SFA.DAS.Reservations.Web
                     {
                         options.Filters.Add(new GoogleAnalyticsFilter(serviceParameters));
                         options.AddAuthorization();
+                        options.EnableEndpointRouting = false;
                     })
-                .AddControllersAsServices()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .AddControllersAsServices();
 
             services.AddHttpsRedirection(options =>
             {
@@ -196,7 +195,7 @@ namespace SFA.DAS.Reservations.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

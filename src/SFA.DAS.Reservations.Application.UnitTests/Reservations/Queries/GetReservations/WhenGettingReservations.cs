@@ -36,7 +36,7 @@ namespace SFA.DAS.Reservations.Application.UnitTests.Reservations.Queries.GetRes
 
             Func<Task> act = async () => { await handler.Handle(query, CancellationToken.None); };
 
-            act.Should().ThrowExactly<ValidationException>()
+            act.Should().ThrowExactlyAsync<ValidationException>().Result
                 .Which.ValidationResult.MemberNames.First(c => c.StartsWith(propertyName)).Should().NotBeNullOrEmpty();
         }
 

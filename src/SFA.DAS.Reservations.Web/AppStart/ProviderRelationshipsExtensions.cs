@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using SFA.DAS.ProviderRelationships.Api.Client;
 using SFA.DAS.ProviderRelationships.Api.Client.Configuration;
@@ -12,7 +13,7 @@ namespace SFA.DAS.Reservations.Web.AppStart
     public static class ProviderRelationshipsExtensions
     {
         public static void AddProviderRelationsApi(this IServiceCollection services, IConfiguration configuration,
-            IHostingEnvironment env)
+            IWebHostEnvironment env)
         {
             if (env.IsDevelopment() && configuration.UseStubs())
             {

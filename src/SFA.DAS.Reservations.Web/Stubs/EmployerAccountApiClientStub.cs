@@ -74,6 +74,16 @@ namespace SFA.DAS.Reservations.Web.Stubs
             return Task.FromResult(accountDetails);
         }
 
+        public Task Ping()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ICollection<LegalEntityViewModel>> GetLegalEntityDetailsConnectedToAccount(string accountId)
+        {
+            throw new NotImplementedException();
+        }
+
         #region not implemented
         public Task<AccountDetailViewModel> GetAccount(string hashedAccountId)
         {
@@ -120,7 +130,7 @@ namespace SFA.DAS.Reservations.Web.Stubs
             throw new NotImplementedException();
         }
 
-        public Task<T> GetResource<T>(string uri) where T : IAccountResource
+        Task<T> IAccountApiClient.GetResource<T>(string uri)
         {
             throw new NotImplementedException();
         }
