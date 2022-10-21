@@ -134,9 +134,12 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         {
             routeModel.UkPrn = null;
             var claim = new Claim(EmployerClaims.IdamsUserIdClaimTypeIdentifier, Guid.NewGuid().ToString());
-            var context = new DefaultHttpContext
+            var context = new ControllerContext
             {
-                User  = new ClaimsPrincipal(new ClaimsIdentity(new[] { claim }))
+               HttpContext = new DefaultHttpContext
+               {
+                   User = new ClaimsPrincipal(new ClaimsIdentity(new[] { claim }))
+               }
             };
             controller.ControllerContext = context;
             mockMediator
