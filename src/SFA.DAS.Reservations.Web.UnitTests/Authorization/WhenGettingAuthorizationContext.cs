@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Primitives;
 using Moq;
@@ -43,9 +44,13 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Authorization
                 .Returns(new TryGetReturns((string cohortRef, EncodingType encodingType, ref long val) => true));
 
             _routingFeature.Setup(f => f.RouteData).Returns(_routeData);
-            
-            _httpContextAccessor.Setup(c => c.HttpContext.Features[typeof(IRoutingFeature)])
-                .Returns(_routingFeature.Object);
+
+            var featureCollectionMock = new Mock<IFeatureCollection>();
+
+            featureCollectionMock.Setup(m => m.Get<IRoutingFeature>()).Returns(_routingFeature.Object);
+
+            _httpContextAccessor.Setup(c => c.HttpContext.Features)
+                .Returns(featureCollectionMock.Object);
 
             var queryParams = new Dictionary<string, StringValues>
             {
