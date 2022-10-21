@@ -10,8 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
-using SFA.DAS.Reservations.Application.Employers.Queries;
-using SFA.DAS.Reservations.Application.Providers.Queries;
 using SFA.DAS.Reservations.Application.Providers.Queries.GetTrustedEmployers;
 using SFA.DAS.Reservations.Application.Reservations.Queries.GetReservations;
 using SFA.DAS.Reservations.Domain.Interfaces;
@@ -19,14 +17,14 @@ using SFA.DAS.Reservations.Domain.Reservations;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
-using SFA.DAS.Testing.AutoFixture;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Manage
 {
     [TestFixture]
     public class WhenCallingGetEmployerManage
     {
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Gets_List_Of_Reservations_For_Single_Employer_Account(
             ReservationsRouteModel routeModel,
             GetReservationsResult getReservationsResult,
@@ -51,7 +49,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
                 Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Returns_List_Of_Reservations_For_Single_Employer_Account(
             ReservationsRouteModel routeModel,
             GetReservationsResult getReservationsResult,
@@ -106,7 +104,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
                 options => options.ExcludingMissingMembers());
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Add_Apprentice_Url_UkPrn_Will_Be_Populated_From_RouteModel_Reservation(
             ReservationsRouteModel routeModel,
             GetTrustedEmployersResponse getTrustedEmployersResponse,

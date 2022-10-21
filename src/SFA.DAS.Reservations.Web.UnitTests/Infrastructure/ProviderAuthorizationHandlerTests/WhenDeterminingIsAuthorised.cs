@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Web.Infrastructure;
-using SFA.DAS.Testing.AutoFixture;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.ProviderAuthorizationHandlerTests
 {
     public class WhenDeterminingIsAuthorised
     {
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public void ThenReturnsTrueIfProviderIsAuthorised(
             ProviderUkPrnRequirement requirement,
             AuthorizationFilterContext contextFilter,
@@ -30,7 +30,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.ProviderAuthorizatio
             Assert.IsTrue(result);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public void ThenReturnsFalseIfProviderUkprnNotInRoute(
             ProviderUkPrnRequirement requirement,
             AuthorizationFilterContext contextFilter,
@@ -48,7 +48,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.ProviderAuthorizatio
             Assert.IsFalse(result);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public void ThenReturnsFalseIfUserDoesNotHaveClaim(
             ProviderUkPrnRequirement requirement,
             AuthorizationFilterContext contextFilter,
@@ -68,7 +68,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.ProviderAuthorizatio
             Assert.IsFalse(result);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public void ThenReturnsFalseIfUserDoesNotHaveMatchingUkprnInClaim(
             ProviderUkPrnRequirement requirement,
             AuthorizationFilterContext contextFilter,

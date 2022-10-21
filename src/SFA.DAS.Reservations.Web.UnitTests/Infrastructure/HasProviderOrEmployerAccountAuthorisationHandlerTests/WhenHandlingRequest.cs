@@ -8,13 +8,12 @@ using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.UnitTests.Customisations;
-using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.HasProviderOrEmployerAccountAuthorisationHandlerTests
 {
     public class WhenHandlingRequest
     {
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenChecksIfProviderIsAuthorised(
             [Frozen] Mock<IProviderAuthorisationHandler> providerAuthorizationHandler,
             HasProviderOrEmployerAccountRequirement requirement,
@@ -53,7 +52,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.HasProviderOrEmploye
             employerAccountAuthorizationHandler.Verify(h => h.IsEmployerAuthorised(context, false), Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenFailsCheckIfProviderIsNotAuthorised(
             [Frozen] Mock<IProviderAuthorisationHandler> providerAuthorizationHandler,
             HasProviderOrEmployerAccountRequirement requirement,
@@ -76,7 +75,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.HasProviderOrEmploye
             Assert.IsFalse(context.HasSucceeded);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenFailsCheckIfEmployerIsNotAuthorised(
             [Frozen] Mock<IEmployerAccountAuthorisationHandler> employerAccountAuthorizationHandler,
             HasProviderOrEmployerAccountRequirement requirement,
@@ -99,7 +98,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.HasProviderOrEmploye
             Assert.IsFalse(context.HasSucceeded);
         }
 
-          [Test, MoqAutoData]
+          [Test, DomainAutoData]
         public async Task ThenPassesCheckIfProviderIsNotAuthorised(
             [Frozen] Mock<IProviderAuthorisationHandler> providerAuthorizationHandler,
             HasProviderOrEmployerAccountRequirement requirement,
@@ -122,7 +121,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Infrastructure.HasProviderOrEmploye
             Assert.IsTrue(context.HasSucceeded);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenPassesCheckIfEmployerIsNotAuthorised(
             [Frozen] Mock<IEmployerAccountAuthorisationHandler> employerAccountAuthorizationHandler,
             HasProviderOrEmployerAccountRequirement requirement,

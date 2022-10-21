@@ -18,14 +18,13 @@ using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
 using SFA.DAS.Reservations.Web.UnitTests.Customisations;
-using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Manage
 {
     [TestFixture]
     public class WhenCallingGetProviderManage
     {
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Gets_List_Of_Reservations_From_Search(
             ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -46,7 +45,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
                 Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Returns_List_Of_Reservations_From_Mediator(
             [Frozen] ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -88,7 +87,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             viewModel.FilterModel.StartDateFilters.Should().BeEquivalentTo(searchResult.StartDateFilters);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Reservation_From_This_Provider_Then_Is_Deletable(
             [Frozen] ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -113,7 +112,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
                 .Should().AllBeEquivalentTo(true);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Reservation_From_Different_Provider_Then_Not_Deletable(
             [Frozen] ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -138,7 +137,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
                 .Should().AllBeEquivalentTo(false);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Add_Apprentice_Url_UkPrn_Will_Be_Populated_From_RouteModel_Reservation(
             ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -181,7 +180,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
                 .All(c => c.ApprenticeUrl.Equals(expectedUrl)).Should().BeTrue();
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_The_Provider_Has_No_TrustedEmployers_Then_A_NoPermissions_View_Is_Returned(
             ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -198,7 +197,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.ViewName.Should().Be("NoPermissions");
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Filter_Params_Assigned_To_View_Model(
             ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -217,7 +216,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             viewModel.FilterModel.Should().BeEquivalentTo(filterModel);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_The_Cached_Search_Is_Loaded_If_From_BackLink(
             ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -247,7 +246,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             routeModel.IsFromManage = false;
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_The_Cached_Search_Is_Not_Loaded_If_Null_From_BackLink(
             ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -273,7 +272,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             routeModel.IsFromManage = false;
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_The_Cached_Search_Is_Deleted_If_Not_From_BackLink_And_New_One_Saved(
             ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,
@@ -296,7 +295,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
 
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_The_Cached_Search_Is_Not_Saved_If_It_Is_Empty_But_The_Cache_Is_Still_Cleared(
             ReservationsRouteModel routeModel,
             ManageReservationsFilterModel filterModel,

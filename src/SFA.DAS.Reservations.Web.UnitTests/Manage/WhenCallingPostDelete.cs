@@ -12,14 +12,14 @@ using SFA.DAS.Reservations.Application.Reservations.Commands.DeleteReservation;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
-using SFA.DAS.Testing.AutoFixture;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Manage
 {
     [TestFixture]
     public class WhenCallingPostDelete
     {
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Delete_Invalid_And_Has_Ukprn_Then_Shows_Provider_Delete_View_Again(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -33,7 +33,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.Model.Should().Be(viewModel);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Delete_Invalid_And_No_Ukprn_Then_Shows_Employer_Delete_View_Again(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -48,7 +48,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.Model.Should().Be(viewModel);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Has_Ukprn_And_No_Id_Then_Redirect_To_Provider_Manage(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -62,7 +62,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.RouteName.Should().Be(RouteNames.ProviderManage);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_No_Ukprn_And_No_Id_Then_Redirect_To_Employer_Manage(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -77,7 +77,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.RouteName.Should().Be(RouteNames.EmployerManage);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Has_Ukprn_And_ValidationException_Then_Returns_To_Provider_Delete_View(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -95,7 +95,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.ViewName.Should().Be(ViewNames.ProviderDelete);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_No_Ukprn_And_ValidationException_Then_Returns_To_Employer_Delete_View(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -114,7 +114,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.ViewName.Should().Be(ViewNames.EmployerDelete);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Has_Ukprn_And_Exception_Then_Redirects_To_Provider_Error(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -132,7 +132,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.RouteName.Should().Be(RouteNames.ProviderError);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_No_Ukprn_And_Exception_Then_Redirects_To_Employer_Error(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -151,7 +151,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.RouteName.Should().Be(RouteNames.EmployerError);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Delete_True_And_Has_Ukprn_Then_Redirects_To_Provider_Completed_Route(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -169,7 +169,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
                 Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Delete_True_And_No_Ukprn_Then_Redirects_To_Employer_Completed_Route(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -188,7 +188,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
                 Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Delete_False_And_Has_Ukprn_Then_Redirects_To_Provider_Manage_Route(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
@@ -205,7 +205,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Manage
             result.RouteValues["IsFromManage"].Should().Be(true);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Delete_False_And_No_Ukprn_Then_Redirects_To_Employer_Manage_Route(
             ReservationsRouteModel routeModel,
             DeleteViewModel viewModel,
