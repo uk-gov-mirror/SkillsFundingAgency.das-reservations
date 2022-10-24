@@ -10,14 +10,14 @@ using SFA.DAS.Reservations.Application.FundingRules.Commands.MarkRuleAsRead;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
-using SFA.DAS.Testing.AutoFixture;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
 {
     public class WhenSavingRuleNotificationChoice
     {
         
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_If_Provider_Reads_Ukprn_Claim_And_Sends_Command_To_Mark_Rule_As_Read_And_Redirects_To_Route_In_Model(
             FundingRestrictionNotificationViewModel viewModel,
             ReservationsRouteModel routeModel,
@@ -47,7 +47,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
 
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_If_Employer_Reads_UserId_Claim_And_Sends_Command_To_Mark_Rule_As_Read_And_Redirects_To_Route_In_Model(
             FundingRestrictionNotificationViewModel viewModel,
             ReservationsRouteModel routeModel,
@@ -76,7 +76,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
 
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task ThenDoesNotSendsCommandIfNotMarkedAsReadAnd_Redirects_To_Route_In_Model(
             FundingRestrictionNotificationViewModel viewModel,
             ReservationsRouteModel routeModel,

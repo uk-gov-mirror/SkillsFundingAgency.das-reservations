@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using AutoFixture.NUnit3;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Reservations.Application.FundingRules.Queries.GetNextUnreadGlobalFundingRule;
@@ -15,14 +14,14 @@ using SFA.DAS.Reservations.Domain.Rules.Api;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
-using SFA.DAS.Testing.AutoFixture;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
 {
     public class WhenViewingTheCourseCheckRulePage
     {
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_If_Employer_Redirect_To_Funding_Notification_If_Funding_Rules_Exist(
             ReservationsRouteModel routeModel,
             string expectedUserId,
@@ -66,7 +65,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             Assert.AreEqual(RouteNames.EmployerSaveRuleNotificationChoice, viewModel.PostRouteName);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_If_Employer_Redirect_To_Employer_Select_Course_If_No_Funding_Rules_Exist(
             ReservationsRouteModel routeModel,
             string expectedUserId,
@@ -90,7 +89,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             Assert.AreEqual(actual.RouteName, RouteNames.EmployerSelectCourse);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_If_Provider_Redirect_To_Funding_Notification_If_Funding_Rules_Exist(
             ReservationsRouteModel routeModel,
             string expectedUkprn,
@@ -133,7 +132,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             Assert.AreEqual(RouteNames.ProviderSaveRuleNotificationChoice, viewModel.PostRouteName);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_If_Provider_Redirect_To_Provider_Select_Course_If_No_Funding_Rules_Exist(
             ReservationsRouteModel routeModel,
             string expectedUkprn,
