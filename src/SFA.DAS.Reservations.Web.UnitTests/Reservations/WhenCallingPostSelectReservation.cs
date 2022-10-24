@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,14 +7,11 @@ using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Primitives;
 using Moq;
 using NUnit.Framework;
 using SFA.DAS.Encoding;
-using SFA.DAS.Reservations.Application.Employers.Queries;
 using SFA.DAS.Reservations.Application.Employers.Queries.GetLegalEntities;
 using SFA.DAS.Reservations.Application.Exceptions;
-using SFA.DAS.Reservations.Application.Providers.Queries;
 using SFA.DAS.Reservations.Application.Providers.Queries.GetTrustedEmployers;
 using SFA.DAS.Reservations.Application.Reservations.Commands.CacheReservationEmployer;
 using SFA.DAS.Reservations.Application.Reservations.Queries.GetAvailableReservations;
@@ -25,14 +21,14 @@ using SFA.DAS.Reservations.Domain.Interfaces;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
-using SFA.DAS.Testing.AutoFixture;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
 {
     [TestFixture]
     public class WhenCallingPostSelectReservation
     {
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Has_UkPrn_And_New_Reservation_Then_Redirects_To_ProviderApprenticeshipTraining_And_The_Cached_Reservation_Is_Created(
             ReservationsRouteModel routeModel,
             SelectReservationViewModel viewModel,
@@ -83,7 +79,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
                     , It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Is_An_Employer_And_New_Reservation_Then_Redirects_To_EmployerApprenticeshipTraining_And_The_Cached_Reservation_Is_Created(
             ReservationsRouteModel routeModel,
             SelectReservationViewModel viewModel,
@@ -125,7 +121,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
                     , It.IsAny<CancellationToken>()), Times.Once);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Reservation_Limit_Has_Been_Reached_For_Provider_Then_ReservationLimit_Reached_View_Is_Shown_With_The_Back_Link_Going_To_Cohort_Details(
                 ReservationsRouteModel routeModel,
                 SelectReservationViewModel viewModel,
@@ -159,7 +155,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.Model.Should().Be(cohortDetailsUrl);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_GlobalRule_Is_In_Place_Then_The_Funding_Paused_View_Is_Shown_For_Provider(
                 ReservationsRouteModel routeModel,
                 SelectReservationViewModel viewModel,
@@ -188,7 +184,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.ViewName.Should().Be("ProviderFundingPaused");
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_GlobalRule_Is_In_Place_Then_The_Funding_Paused_View_Is_Shown_For_Employer(
             ReservationsRouteModel routeModel,
             SelectReservationViewModel viewModel,
@@ -221,7 +217,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.ViewName.Should().Be("EmployerFundingPaused");
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Provider_Has_No_Create_Permission_Then_NoPermissions_View_Is_Shown_With_The_Back_Link_Going_To_Cohort_Details(
                 ReservationsRouteModel routeModel,
                 SelectReservationViewModel viewModel,
@@ -255,7 +251,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.Model.Should().Be(cohortDetailsUrl);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Has_Ukprn_And_ReservationId_Then_Redirects_To_AddApprentice_With_Reservation_Details(
             ReservationsRouteModel routeModel,
             SelectReservationViewModel viewModel,
@@ -281,7 +277,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.Url.Should().Be(addApprenticeUrl);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Is_Employer_And_Has_ReservationId_Then_Redirects_To_AddApprentice_With_Reservation_Details(
             ReservationsRouteModel routeModel,
             SelectReservationViewModel viewModel,
@@ -310,7 +306,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         }
 
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Has_Ukprn_And_ReservationId_And_No_CohortRef_Then_Redirects_To_AddApprentice_With_Reservation_Details(
             ReservationsRouteModel routeModel,
             SelectReservationViewModel viewModel,
@@ -342,7 +338,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
 
 
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Has_Ukprn_And_ReservationId_And_Not_CohortRef_Then_Redirects_To_AddApprentice_With_Reservation_Details(
             ReservationsRouteModel routeModel,
             SelectReservationViewModel viewModel,
@@ -371,7 +367,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.Url.Should().Be(addApprenticeUrl);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_No_Option_Has_Been_Selected_Then_The_Validation_Errors_Are_Returned_To_The_User_And_ViewModel_Recreated(
             ReservationsRouteModel routeModel,
             GetAvailableReservationsResult availableReservationsResult,
@@ -401,7 +397,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             actualModel.AvailableReservations.Should().BeEquivalentTo(availableReservationsResult.Reservations.Select(c => new AvailableReservationViewModel(c)));
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_No_Option_Has_Been_Selected_And_ReservationId_Is_Null_Then_The_Validation_Errors_Are_Returned_To_The_User_And_ViewModel_Recreated(
             ReservationsRouteModel routeModel,
             GetAvailableReservationsResult availableReservationsResult,
@@ -431,7 +427,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             actualModel.AvailableReservations.Should().BeEquivalentTo(availableReservationsResult.Reservations.Select(c => new AvailableReservationViewModel(c)));
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Provider_Creates_Reservation_With_Empty_Cohort_Reference_The_Back_Link_Going_To_Confirm_Employer(
                ReservationsRouteModel routeModel,
                SelectReservationViewModel viewModel,

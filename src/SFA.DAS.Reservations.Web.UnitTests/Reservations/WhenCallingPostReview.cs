@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading;
@@ -16,6 +15,7 @@ using SFA.DAS.Reservations.Infrastructure.Exceptions;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 using SFA.DAS.Testing.AutoFixture;
 
 
@@ -24,7 +24,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
     [TestFixture]
     public class WhenCallingPostReview
     {
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Invalid_ViewModel_And_Has_Ukprn_Then_Continues_As_Normal(
             ReservationsRouteModel routeModel, 
             PostReviewViewModel viewModel,
@@ -37,7 +37,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.RouteName.Should().Be(RouteNames.ProviderCompleted);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Invalid_ViewModel_And_No_Ukprn_Then_Renders_Provider_Review_Again(
             ReservationsRouteModel routeModel, 
             PostReviewViewModel viewModel,
@@ -52,7 +52,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.Model.Should().BeEquivalentTo(new ReviewViewModel(routeModel, viewModel));
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_Reserve_False_And_No_Ukprn_Then_Redirect_To_Account_Home(
             ReservationsRouteModel routeModel, 
             PostReviewViewModel viewModel,
@@ -71,7 +71,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.Url.Should().Be(expectedUrl);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Sends_Create_Command_With_Correct_Values_Set(
             ReservationsRouteModel routeModel, 
             PostReviewViewModel viewModel,
@@ -86,7 +86,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         }
 
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Sends_UserId_If_Employer_Command_With_Correct_Values_Set(
             Guid expectedUserId,
             ReservationsRouteModel routeModel,
@@ -106,7 +106,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
                     command.Id == routeModel.Id && command.UserId.Equals(expectedUserId)), It.IsAny<CancellationToken>()));
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Redirects_To_The_Confirmation_Employer_View_When_No_UkPrn(
             ReservationsRouteModel routeModel, 
             PostReviewViewModel viewModel,
@@ -129,7 +129,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             result.RouteValues.Should().ContainKey("id").WhoseValue.Should().NotBe(Guid.Empty);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Redirects_To_The_Confirmation_Employer_View_With_ProviderId_When_Part_Of_Empty_Cohort(
             ReservationsRouteModel routeModel,
             PostReviewViewModel viewModel,
@@ -159,7 +159,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
                 .WhoseValue.Should().Be(createReservationResult.ProviderId);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Redirects_To_The_Confirmation_Employer_View_With_Journey_Data(
             ReservationsRouteModel routeModel,
             PostReviewViewModel viewModel,
@@ -184,7 +184,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
                 .WhoseValue.Should().Be(createReservationResult.JourneyData);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task Then_Redirects_To_The_Confirmation_Provider_View_When_Has_UkPrn(
             ReservationsRouteModel routeModel, 
             PostReviewViewModel viewModel,
@@ -207,7 +207,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
                 .WhoseValue.Should().Be(createReservationResult.CohortRef);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_ValidationException_And_Has_Ukprn_Then_Redirects_To_ProviderIndex(
             ReservationsRouteModel routeModel,
             PostReviewViewModel viewModel,
@@ -227,7 +227,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             redirectToRouteResult?.RouteName.Should().Be(RouteNames.ProviderIndex);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_ValidationException_And_No_Ukprn_Then_Redirects_To_EmployerIndex(
             ReservationsRouteModel routeModel,
             PostReviewViewModel viewModel,
@@ -251,7 +251,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             redirectToRouteResult?.RouteName.Should().Be(RouteNames.EmployerIndex);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_CachedReservationNotFoundException_And_Has_Ukprn_Then_Redirects_To_ProviderIndex(
             ReservationsRouteModel routeModel,
             PostReviewViewModel viewModel,
@@ -270,7 +270,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             redirectToRouteResult?.RouteName.Should().Be(RouteNames.ProviderIndex);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task And_CachedReservationNotFoundException_And_No_Ukprn_Then_Redirects_To_EmployerIndex(
             ReservationsRouteModel routeModel,
             PostReviewViewModel viewModel,
