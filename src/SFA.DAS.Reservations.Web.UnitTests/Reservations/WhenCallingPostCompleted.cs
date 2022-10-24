@@ -1,9 +1,6 @@
-﻿using System;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoFixture.AutoMoq;
-using AutoFixture.Kernel;
 using AutoFixture.NUnit3;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -13,6 +10,7 @@ using SFA.DAS.Reservations.Infrastructure.Configuration;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
@@ -27,11 +25,11 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             _fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public void And_Has_Ukprn_And_ValidationError_Then_Return_Provider_Completed_View(
-            CompletedViewModel model, 
+            CompletedViewModel model,
             ReservationsRouteModel routeModel,
-            [Greedy] ReservationsController controller)
+            ReservationsController controller)
         {
             controller.ModelState.AddModelError("AddApprentice", "AddApprentice");
 
@@ -42,12 +40,11 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             Assert.AreEqual(ViewNames.ProviderCompleted, actualModel.ViewName);
         }
 
-        [Test, AutoData]
+        [Test, DomainAutoData]
         public void And_No_Ukprn_And_ValidationError_Then_Return_Employer_Completed_View(
-            CompletedViewModel model, 
+            CompletedViewModel model,
             ReservationsRouteModel routeModel,
-            [Frozen] Mock<IMediator> mediator,
-            [Greedy] ReservationsController controller)
+            ReservationsController controller)
         {
             routeModel.UkPrn = null;
             controller.ModelState.AddModelError("AddApprentice", "AddApprentice");
@@ -66,32 +63,32 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         [MoqInlineAutoData(CompletedReservationWhatsNext.FindApprenticeshipTraining)]
         public void And_Has_Ukprn_Then_The_Request_Is_Redirected_Based_On_The_Selection(
             CompletedReservationWhatsNext selection,
+            CompletedViewModel model,
+            ReservationsRouteModel routeModel,
             [Frozen] IOptions<ReservationsWebConfiguration> config,
-            [Frozen] Mock<IExternalUrlHelper> mockUrlHelper,
-            [Greedy] ReservationsController controller)
+            [Frozen] Mock<IExternalUrlHelper> externalUrlHelperMock,
+            [NoAutoProperties] ReservationsController controller)
         {
-            var model = _fixture.Create<CompletedViewModel>();
             model.WhatsNext = selection;
-            var routeModel = _fixture.Create<ReservationsRouteModel>();
             routeModel.EmployerAccountId = null;
             model.CohortRef = string.Empty;
             var providerRecruitUrl = _fixture.Create<string>();
             var addApprenticeUrl = _fixture.Create<string>();
             var homeUrl = _fixture.Create<string>();
-            
-            mockUrlHelper
+
+            externalUrlHelperMock
                 .Setup(helper => helper.GenerateUrl(
                     It.Is<UrlParameters>(parameters => 
                         parameters.Id == routeModel.UkPrn.ToString() && 
                         parameters.SubDomain == "recruit")))
                 .Returns(providerRecruitUrl);
-            mockUrlHelper
+            externalUrlHelperMock
                 .Setup(helper => helper.GenerateAddApprenticeUrl(routeModel.Id.Value,
                     routeModel.AccountLegalEntityPublicHashedId, model.CourseId, model.UkPrn,
                     model.StartDate, "", routeModel.EmployerAccountId, 
                     false, string.Empty, string.Empty, model.JourneyData))
                 .Returns(addApprenticeUrl);
-            mockUrlHelper
+            externalUrlHelperMock
                 .Setup(helper => helper.GenerateDashboardUrl(null))
                 .Returns(homeUrl);
             
@@ -131,34 +128,34 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         [MoqInlineAutoData(CompletedReservationWhatsNext.FindApprenticeshipTraining)]
         public void And_No_Ukprn_Then_The_Request_Is_Redirected_Based_On_The_Selection(
             CompletedReservationWhatsNext selection,
+            CompletedViewModel model,
+            ReservationsRouteModel routeModel,
             [Frozen] IOptions<ReservationsWebConfiguration> config,
-            [Greedy] ReservationsController controller)
+            [Frozen] Mock<IExternalUrlHelper> externalUrlHelperMock,
+            [NoAutoProperties] ReservationsController controller)
         {
-            var model = _fixture.Create<CompletedViewModel>();
             model.WhatsNext = selection;
-            var routeModel = _fixture.Create<ReservationsRouteModel>();
             routeModel.UkPrn = null;
             model.CohortRef = string.Empty;
             model.UkPrn = null;
             var employerRecruitUrl = _fixture.Create<string>();
             var addApprenticeUrl = _fixture.Create<string>();
             var homeUrl = _fixture.Create<string>();
-            var mockUrlHelper = _fixture.Freeze<Mock<IExternalUrlHelper>>();
-            
-            mockUrlHelper
+
+            externalUrlHelperMock
                 .Setup(helper => helper.GenerateUrl(
                     It.Is<UrlParameters>(parameters => 
                         parameters.Id == routeModel.EmployerAccountId &&
                         parameters.SubDomain == "recruit" &&
                         parameters.Folder == "accounts")))
                 .Returns(employerRecruitUrl);
-            mockUrlHelper
+            externalUrlHelperMock
                 .Setup(helper => helper.GenerateAddApprenticeUrl(routeModel.Id.Value,
                     routeModel.AccountLegalEntityPublicHashedId, model.CourseId, model.UkPrn,
                     model.StartDate, "", routeModel.EmployerAccountId, 
                     false, string.Empty, string.Empty, model.JourneyData))
                 .Returns(addApprenticeUrl);
-            mockUrlHelper
+            externalUrlHelperMock
                 .Setup(helper => helper.GenerateDashboardUrl(routeModel.EmployerAccountId))
                 .Returns(homeUrl);
             
@@ -192,16 +189,17 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         }
 
         [Test]
-        [MoqAutoData]
-        public void Then_When_There_Is_A_Cohort_Ref_The_Add_Apprentice_Link_Includes_The_Reference([Greedy] ReservationsController controller)
+        [DomainAutoData]
+        public void Then_When_There_Is_A_Cohort_Ref_The_Add_Apprentice_Link_Includes_The_Reference(
+            CompletedViewModel model,
+            ReservationsRouteModel routeModel,
+            [Frozen] Mock<IExternalUrlHelper> externalUrlHelperMock,
+            ReservationsController controller)
         {
             //Arrange
-            var model = _fixture.Create<CompletedViewModel>();
             model.WhatsNext = CompletedReservationWhatsNext.AddAnApprentice;
-            var routeModel = _fixture.Create<ReservationsRouteModel>();
             var addApprenticeUrl = _fixture.Create<string>();
-            var mockUrlHelper = _fixture.Freeze<Mock<IExternalUrlHelper>>();
-            mockUrlHelper
+            externalUrlHelperMock
                 .Setup(helper => helper.GenerateAddApprenticeUrl(routeModel.Id.Value,
                     routeModel.AccountLegalEntityPublicHashedId, model.CourseId, model.UkPrn,
                     model.StartDate, model.CohortRef, routeModel.EmployerAccountId, 
@@ -219,19 +217,20 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
 
 
         [Test]
-        [MoqAutoData]
-        public void Then_When_There_Is_No_Cohort_Ref_But_ProviderId_The_Add_Apprentice_Link_Includes_The_Reference_For_Employer([Greedy] ReservationsController controller)
+        [DomainAutoData]
+        public void Then_When_There_Is_No_Cohort_Ref_But_ProviderId_The_Add_Apprentice_Link_Includes_The_Reference_For_Employer(
+            CompletedViewModel model,
+            ReservationsRouteModel routeModel,
+            [Frozen] Mock<IExternalUrlHelper> externalUrlHelperMock,
+            ReservationsController controller)
         {
             //Arrange
-            var model = _fixture.Create<CompletedViewModel>();
             model.WhatsNext = CompletedReservationWhatsNext.AddAnApprentice;
             model.CohortRef = string.Empty;
-            var routeModel = _fixture.Create<ReservationsRouteModel>();
             routeModel.UkPrn = null;
             var addApprenticeUrl = _fixture.Create<string>();
-            var mockUrlHelper = _fixture.Freeze<Mock<IExternalUrlHelper>>();
-            
-            mockUrlHelper
+
+            externalUrlHelperMock
                 .Setup(helper => helper.GenerateAddApprenticeUrl(routeModel.Id.Value,
                     routeModel.AccountLegalEntityPublicHashedId, model.CourseId, model.UkPrn,
                     model.StartDate, model.CohortRef, routeModel.EmployerAccountId, 
