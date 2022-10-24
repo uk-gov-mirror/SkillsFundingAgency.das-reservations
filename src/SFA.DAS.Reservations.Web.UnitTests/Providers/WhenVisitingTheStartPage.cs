@@ -7,6 +7,7 @@ using AutoFixture.AutoMoq;
 using AutoFixture.NUnit3;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Moq;
 using NUnit.Framework;
@@ -18,6 +19,7 @@ using SFA.DAS.Reservations.Domain.Rules;
 using SFA.DAS.Reservations.Web.Controllers;
 using SFA.DAS.Reservations.Web.Infrastructure;
 using SFA.DAS.Reservations.Web.Models;
+using SFA.DAS.Reservations.Web.UnitTests.Customisations;
 using SFA.DAS.Testing.AutoFixture;
 
 namespace SFA.DAS.Reservations.Web.UnitTests.Providers
@@ -31,6 +33,9 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Providers
         public void Arrange()
         {
             var fixture = new Fixture().Customize(new AutoMoqCustomization { ConfigureMembers = true });
+
+            fixture.Customize<BindingInfo>(c => c.OmitAutoProperties());
+
             _mediator = fixture.Freeze<Mock<IMediator>>();
             _mediator.Setup(m => m.Send(It.IsAny<GetFundingRulesQuery>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new GetFundingRulesResult
@@ -138,7 +143,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Providers
             Assert.AreEqual("NoPermissions", result.ViewName);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task WhenFundingIsPaused_AndFromManage_ThenBackLinkSetToManage(
             string expectedBackLink,
             uint ukprn,
@@ -182,7 +187,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Providers
             mockExternalUrlHelper.Verify(x => x.GenerateDashboardUrl(It.IsAny<string>()), Times.Never);
         }
 
-        [Test, MoqAutoData]
+        [Test, DomainAutoData]
         public async Task WhenFundingIsPaused_AndNotFromManage_ThenBackLinkSetToDashBoard(
             [Frozen] Mock<IMediator> mockMediator,
             string expectedBackLink,

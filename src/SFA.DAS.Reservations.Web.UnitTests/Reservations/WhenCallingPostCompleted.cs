@@ -3,6 +3,7 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Kernel;
 using AutoFixture.NUnit3;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -45,6 +46,7 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         public void And_No_Ukprn_And_ValidationError_Then_Return_Employer_Completed_View(
             CompletedViewModel model, 
             ReservationsRouteModel routeModel,
+            [Frozen] Mock<IMediator> mediator,
             [Greedy] ReservationsController controller)
         {
             routeModel.UkPrn = null;
@@ -63,7 +65,8 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         [MoqInlineAutoData(CompletedReservationWhatsNext.Homepage)]
         [MoqInlineAutoData(CompletedReservationWhatsNext.FindApprenticeshipTraining)]
         public void And_Has_Ukprn_Then_The_Request_Is_Redirected_Based_On_The_Selection(
-            CompletedReservationWhatsNext selection, 
+            CompletedReservationWhatsNext selection,
+            [Frozen] IOptions<ReservationsWebConfiguration> config,
             [Frozen] Mock<IExternalUrlHelper> mockUrlHelper,
             [Greedy] ReservationsController controller)
         {
@@ -72,7 +75,6 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             var routeModel = _fixture.Create<ReservationsRouteModel>();
             routeModel.EmployerAccountId = null;
             model.CohortRef = string.Empty;
-            var config = _fixture.Freeze<IOptions<ReservationsWebConfiguration>>();
             var providerRecruitUrl = _fixture.Create<string>();
             var addApprenticeUrl = _fixture.Create<string>();
             var homeUrl = _fixture.Create<string>();
@@ -127,7 +129,10 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
         [MoqInlineAutoData(CompletedReservationWhatsNext.AddAnApprentice)]
         [MoqInlineAutoData(CompletedReservationWhatsNext.Homepage)]
         [MoqInlineAutoData(CompletedReservationWhatsNext.FindApprenticeshipTraining)]
-        public void And_No_Ukprn_Then_The_Request_Is_Redirected_Based_On_The_Selection(CompletedReservationWhatsNext selection, [Greedy] ReservationsController controller)
+        public void And_No_Ukprn_Then_The_Request_Is_Redirected_Based_On_The_Selection(
+            CompletedReservationWhatsNext selection,
+            [Frozen] IOptions<ReservationsWebConfiguration> config,
+            [Greedy] ReservationsController controller)
         {
             var model = _fixture.Create<CompletedViewModel>();
             model.WhatsNext = selection;
@@ -135,7 +140,6 @@ namespace SFA.DAS.Reservations.Web.UnitTests.Reservations
             routeModel.UkPrn = null;
             model.CohortRef = string.Empty;
             model.UkPrn = null;
-            var config = _fixture.Freeze<IOptions<ReservationsWebConfiguration>>();
             var employerRecruitUrl = _fixture.Create<string>();
             var addApprenticeUrl = _fixture.Create<string>();
             var homeUrl = _fixture.Create<string>();
