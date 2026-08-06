@@ -6,7 +6,7 @@ namespace SFA.DAS.Reservations.Web.Models
     {
         [Required(ErrorMessage = "You must select a start date")]
         public string StartDate { get; set; }
-        [Required(ErrorMessage = "Select which training your learner will take")]
+        [Required(ErrorMessage = "Select which training the learner will take")]
         public string SelectedCourseId { get; set; }
         public string AccountLegalEntityPublicHashedId { get; set; }
         public string CohortRef { get; set; }
